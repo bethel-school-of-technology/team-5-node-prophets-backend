@@ -47,9 +47,10 @@ const getUserProfile = async (req, res, next) => {
     let user = await (0, auth_1.verifyUser)(req);
     let reqId = parseInt(req.params.id);
     if (user && user.user_id === reqId) {
-        let { fullname, password, email, city, state } = user;
+        let { fullname, username, password, email, city, state } = user;
         res.status(200).json({
             fullname,
+            username,
             password,
             email,
             city,
