@@ -8,9 +8,9 @@ const dbName = "etmDB";
 const username = "root";
 const password = "Password1!";
 const sequelize = new sequelize_1.Sequelize(dbName, username, password, {
-    host: "localhost",
+    host: "127.0.0.1",
     port: 3306,
-    dialect: "mysql",
+    dialect: "mysql"
 });
 (0, user_1.UserFactory)(sequelize);
 (0, qak_1.QakFactory)(sequelize);

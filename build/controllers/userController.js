@@ -16,7 +16,7 @@ const createUser = async (req, res, next) => {
         let created = await user_1.User.create(newUser);
         res.status(201).json({
             username: created.username,
-            userid: created.user_id,
+            userid: created.user_id
         });
     }
     else {
@@ -26,7 +26,7 @@ const createUser = async (req, res, next) => {
 exports.createUser = createUser;
 const loginUser = async (req, res, next) => {
     let existingUser = await user_1.User.findOne({
-        where: { username: req.body.username },
+        where: { username: req.body.username }
     });
     if (existingUser) {
         let passwordsMatch = await (0, auth_1.comparePasswords)(req.body.password, existingUser.password);
@@ -53,7 +53,7 @@ const getUserProfile = async (req, res, next) => {
             password,
             email,
             city,
-            state,
+            state
         });
     }
     else {

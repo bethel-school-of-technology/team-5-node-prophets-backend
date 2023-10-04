@@ -4,7 +4,7 @@ import {
   hashPassword,
   comparePasswords,
   signUserToken,
-  verifyUser,
+  verifyUser
 } from "../services/auth";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
@@ -20,7 +20,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
     let created = await User.create(newUser);
     res.status(201).json({
       username: created.username,
-      userid: created.user_id,
+      userid: created.user_id
     });
   } else {
     res.status(400).send("Username and password required");
@@ -29,7 +29,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
 export const loginUser: RequestHandler = async (req, res, next) => {
   let existingUser: User | null = await User.findOne({
-    where: { username: req.body.username },
+    where: { username: req.body.username }
   });
 
   if (existingUser) {
@@ -61,7 +61,7 @@ export const getUserProfile: RequestHandler = async (req, res, next) => {
       password,
       email,
       city,
-      state,
+      state
     });
   } else {
     res.status(401).send();
