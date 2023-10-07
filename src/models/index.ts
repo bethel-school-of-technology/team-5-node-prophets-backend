@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import { UserFactory } from "./user";
 import { QakFactory, AssociateUserQak } from "./qak";
 
-const dbName = "etmDB";
+const dbName = "empowerDB";
 const username = "root";
 const password = "Password1!";
 
