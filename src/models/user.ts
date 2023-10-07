@@ -3,7 +3,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Sequelize
+  Sequelize,
 } from "sequelize";
 
 export class User extends Model<
@@ -17,6 +17,7 @@ export class User extends Model<
   declare email: string;
   declare city: string;
   declare state: string;
+  declare profilePicture: string | null;
   declare createdAt?: Date;
   declare updatedAt?: Date;
 }
@@ -28,51 +29,54 @@ export function UserFactory(sequelize: Sequelize) {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
       },
       fullname: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       username: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: "compositeIndex"
+        unique: "compositeIndex",
       },
 
       password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: "compositeIndex"
+        unique: "compositeIndex",
       },
       city: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
       },
       state: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true,
       },
-
+      profilePicture: {
+        type: DataTypes.STRING(255),
+        allowNull: true, // Allow null as the user may not have a profile picture
+      },
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW
+        defaultValue: DataTypes.NOW,
       },
       updatedAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW
-      }
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       tableName: "users",
       freezeTableName: true,
-      sequelize
+      sequelize,
     }
   );
 }
