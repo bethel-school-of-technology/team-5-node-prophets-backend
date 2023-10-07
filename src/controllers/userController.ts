@@ -1,10 +1,11 @@
 import { RequestHandler } from "express";
 import { User } from "../models/user";
+import { Qak } from "../models/qak";
 import {
   hashPassword,
   comparePasswords,
   signUserToken,
-  verifyUser,
+  verifyUser
 } from "../services/auth";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
@@ -20,7 +21,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
     let created = await User.create(newUser);
     res.status(201).json({
       username: created.username,
-      userid: created.user_id,
+      userid: created.user_id
     });
   } else {
     res.status(400).send("Username and password required");
@@ -29,7 +30,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
 export const loginUser: RequestHandler = async (req, res, next) => {
   let existingUser: User | null = await User.findOne({
-    where: { username: req.body.username },
+    where: { username: req.body.username }
   });
 
   if (existingUser) {
@@ -62,9 +63,22 @@ export const getUserProfile: RequestHandler = async (req, res, next) => {
       email,
       city,
       state,
-      profilePicture,
+      profilePicture
     });
   } else {
     res.status(401).send();
+  }
+};
+
+export const getUserQaks: RequestHandler = async (req, res, next) => {
+  let user: User | null = await verifyUser(req);
+
+  if (user) {
+    let posts = await User.findByPk(user.user_id, {
+      include: Qak
+    });
+    res.status(200).json(posts);
+  } else {
+    res.status(404).json();
   }
 };
