@@ -7,10 +7,10 @@ import qakRoutes from "./routes/qakRoutes";
 import userRoutes from "./routes/userRoutes";
 import { User } from "./models/user";
 import { Qak } from "./models/qak";
-import cors from "cors";
+const cors = require("cors"); // same thing as import cors from "cors";
 
 const app = express();
-const PORT = 3000;
+
 const corsOptions = {
   origin: ["http://localhost:4200", "http://localhost:3001"],
 };
@@ -64,6 +64,6 @@ db.sync({ alter: true }).then(() => {
   console.info("Connected to the database");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(3000, () => {
+  console.log(`Server is running on port 3000`);
 });
