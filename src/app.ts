@@ -5,19 +5,21 @@ import { db } from "./models";
 import bodyParser from "body-parser";
 import qakRoutes from "./routes/qakRoutes";
 import userRoutes from "./routes/userRoutes";
+import rssRoutes from "./routes/rssRoutes";
 import { User } from "./models/user";
 import { Qak } from "./models/qak";
-const cors = require("cors"); // same thing as import cors from "cors";
+const cors = require("cors");
 
 const app = express();
-
+const rssPort = 4000;
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3001"],
+  origin: ["http://localhost:4200", "http://localhost:3001"]
 };
 
 app.use(cors(corsOptions));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -33,15 +35,15 @@ app.get("/search", async (req, res) => {
           { username: { [Op.like]: `%${query}%` } },
           { email: { [Op.like]: `%${query}%` } },
           { city: { [Op.like]: `%${query}%` } },
-          { state: { [Op.like]: `%${query}%` } },
-        ],
-      },
+          { state: { [Op.like]: `%${query}%` } }
+        ]
+      }
     });
 
     const qaks = await Qak.findAll({
       where: {
-        qak: { [Op.like]: `%${query}%` },
-      },
+        qak: { [Op.like]: `%${query}%` }
+      }
     });
 
     res.json({ users, qaks });
@@ -54,6 +56,7 @@ app.get("/search", async (req, res) => {
 // Routes
 app.use("/api/qaks", qakRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/rss", rssRoutes);
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(404).end();
@@ -65,5 +68,5 @@ db.sync({ alter: true }).then(() => {
 });
 
 app.listen(3000, () => {
-  console.log(`Server is running on port 3000`);
+  console.info(`Server is running on port 3000`);
 });
