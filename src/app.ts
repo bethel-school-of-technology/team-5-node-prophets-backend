@@ -11,7 +11,6 @@ import { Qak } from "./models/qak";
 const cors = require("cors");
 
 const app = express();
-const rssPort = 4000;
 const corsOptions = {
   origin: ["http://localhost:4200", "http://localhost:3001"]
 };
