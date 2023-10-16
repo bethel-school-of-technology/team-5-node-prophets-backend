@@ -8,11 +8,10 @@ import userRoutes from "./routes/userRoutes";
 import rssRoutes from "./routes/rssRoutes";
 import { User } from "./models/user";
 import { Qak } from "./models/qak";
-import { articles, getRssFeeds } from "./controllers/RssController"; //Added Article Search for Rss Feed - Joe
+import { articles } from "./controllers/RssController"; //Added Article Search for Rss Feed - Joe
 const cors = require("cors");
 
 const app = express();
-// const rssPort = 4000; not sure why this is here - Joe
 const corsOptions = {
   origin: ["http://localhost:4200", "http://localhost:3001"]
 };
