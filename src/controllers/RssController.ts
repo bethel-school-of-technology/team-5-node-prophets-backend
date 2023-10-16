@@ -12,11 +12,11 @@ const feedURLs = [
   "https://www.techrepublic.com/rssfeeds/topic/education/",
   "https://www.techrepublic.com/rssfeeds/topic/google/",
   "https://www.techrepublic.com/rssfeeds/topic/tech-and-work/",
-  "https://www.techrepublic.com/rssfeeds/topic/tech-industry/"
+  "https://www.techrepublic.com/rssfeeds/topic/tech-industry/",
 ];
 
 const parser = new RSSParser();
-let articles: any[] = [];
+export const articles: any[] = [];
 
 const parse = async (urls: string[]) => {
   for (const url of urls) {
