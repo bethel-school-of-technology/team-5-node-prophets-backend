@@ -5,7 +5,7 @@ import {
   hashPassword,
   comparePasswords,
   signUserToken,
-  verifyUser
+  verifyUser,
 } from "../services/auth";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
@@ -21,7 +21,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
     let created = await User.create(newUser);
     res.status(201).json({
       username: created.username,
-      userid: created.user_id
+      userid: created.user_id,
     });
   } else {
     res.status(400).send("Username and password required");
@@ -30,7 +30,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
 export const loginUser: RequestHandler = async (req, res, next) => {
   let existingUser: User | null = await User.findOne({
-    where: { username: req.body.username }
+    where: { username: req.body.username },
   });
 
   if (existingUser) {
@@ -63,7 +63,7 @@ export const getUserProfile: RequestHandler = async (req, res, next) => {
       email,
       city,
       state,
-      profilePicture
+      profilePicture,
     });
   } else {
     res.status(401).send();
@@ -75,10 +75,53 @@ export const getUserQaks: RequestHandler = async (req, res, next) => {
 
   if (user) {
     let posts = await User.findByPk(user.user_id, {
-      include: Qak
+      include: Qak,
     });
     res.status(200).json(posts);
   } else {
     res.status(404).json();
+  }
+};
+
+export const updateUserProfile: RequestHandler = async (req, res, next) => {
+  try {
+    const authenticatedUser = await verifyUser(req);
+    if (!authenticatedUser) {
+      return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    const userId = authenticatedUser.user_id;
+
+    // Get the user ID from the request parameters
+    const requestedUserId = +req.params.id;
+
+    // Check if the authenticated user is trying to update their own profile
+    if (userId !== requestedUserId) {
+      return res
+        .status(403)
+        .json({ error: "Not authorized to update this profile" });
+    }
+
+    // Fetch the user with the given ID
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update the user's profile fields
+    if (req.body.fullname) user.fullname = req.body.fullname;
+    if (req.body.email) user.email = req.body.email;
+    if (req.body.city) user.city = req.body.city;
+    if (req.body.state) user.state = req.body.state;
+    if (req.body.profilePicture) user.profilePicture = req.body.profilePicture;
+
+    // Save the updated user profile
+    await user.save();
+
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating user profile:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

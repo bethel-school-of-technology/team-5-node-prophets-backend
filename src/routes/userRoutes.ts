@@ -4,7 +4,8 @@ import {
   createUser,
   getUserProfile,
   loginUser,
-  getUserQaks
+  getUserQaks,
+  updateUserProfile,
 } from "../controllers/userController";
 
 const router = Router();
@@ -14,5 +15,6 @@ router.post("/", createUser);
 router.post("/login", loginUser);
 router.get("/:id", getUserProfile);
 router.get("/qaks/:id", getUserQaks);
+router.put("/:id", updateUserProfile);
 
 export default router;
