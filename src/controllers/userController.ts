@@ -20,11 +20,15 @@ export const createUser: RequestHandler = async (req, res, next) => {
     newUser.password = hashedPassword;
     let created = await User.create(newUser);
     res.status(201).json({
+      user_id: created.user_id,
+      fullname: created.fullname,
       username: created.username,
-      userid: created.user_id,
+      password: created.password,
+      email: created.email,
+      city: created.city,
     });
   } else {
-    res.status(400).send("Username and password required");
+    res.status(400).send("Please complete all required fields");
   }
 };
 
