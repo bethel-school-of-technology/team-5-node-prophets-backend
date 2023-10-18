@@ -23,7 +23,6 @@ export const createUser: RequestHandler = async (req, res, next) => {
       user_id: created.user_id,
       fullname: created.fullname,
       username: created.username,
-      password: created.password,
       email: created.email,
       city: created.city,
     });
@@ -88,44 +87,34 @@ export const getUserQaks: RequestHandler = async (req, res, next) => {
 };
 
 export const updateUserProfile: RequestHandler = async (req, res, next) => {
+  const user: User | null = await verifyUser(req);
+
+  if (!user) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  const reqId = parseInt(req.params.id);
+
+  if (user.user_id !== reqId) {
+    return res
+      .status(403)
+      .send("Forbidden: You can only update your own profile.");
+  }
+
+  // Assuming you have the updated profile data in the request body
+  const updatedProfileData = req.body;
+
+  // Update the user's profile data
   try {
-    const authenticatedUser = await verifyUser(req);
-    if (!authenticatedUser) {
-      return res.status(401).json({ error: "User not authenticated" });
-    }
+    await User.update(updatedProfileData, {
+      where: { user_id: reqId },
+    });
 
-    const userId = authenticatedUser.user_id;
+    // Fetch the updated user data to send back in the response
+    const updatedUser = await User.findByPk(reqId);
 
-    // Get the user ID from the request parameters
-    const requestedUserId = +req.params.id;
-
-    // Check if the authenticated user is trying to update their own profile
-    if (userId !== requestedUserId) {
-      return res
-        .status(403)
-        .json({ error: "Not authorized to update this profile" });
-    }
-
-    // Fetch the user with the given ID
-    const user = await User.findByPk(userId);
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    // Update the user's profile fields
-    if (req.body.fullname) user.fullname = req.body.fullname;
-    if (req.body.email) user.email = req.body.email;
-    if (req.body.city) user.city = req.body.city;
-    if (req.body.state) user.state = req.body.state;
-    if (req.body.profilePicture) user.profilePicture = req.body.profilePicture;
-
-    // Save the updated user profile
-    await user.save();
-
-    res.status(200).json(user);
+    return res.status(200).json(updatedUser);
   } catch (error) {
-    console.error("Error updating user profile:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).send("Internal Server Error");
   }
 };

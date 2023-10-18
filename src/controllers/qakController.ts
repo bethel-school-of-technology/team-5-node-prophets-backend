@@ -39,6 +39,11 @@ export const getQak: RequestHandler = async (req, res, next) => {
 export const updateQak: RequestHandler = async (req, res, next) => {
   let qak_id = req.params.id;
   let newQak: Qak = req.body;
+  let user: User | null = await verifyUser(req);
+
+  if (!user) {
+    return res.status(403).send("Unauthorized");
+  }
 
   let qakFound = await Qak.findByPk(qak_id);
 
@@ -54,6 +59,11 @@ export const updateQak: RequestHandler = async (req, res, next) => {
 
 export const deleteQak: RequestHandler = async (req, res, next) => {
   let qak_id = req.params.id;
+  let user: User | null = await verifyUser(req);
+
+  if (!user) {
+    return res.status(403).send("Unauthorized");
+  }
   let qakFound = await Qak.findByPk(qak_id);
 
   if (qakFound) {
