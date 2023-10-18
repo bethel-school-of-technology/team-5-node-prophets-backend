@@ -34,7 +34,7 @@ export const verifyUser = async (req: Request) => {
     const token = authHeader.split(" ")[1];
     try {
       let decoded: any = await jwt.verify(token, secret);
-      console.log(secret);
+      //console.log(secret);
       return User.findByPk(decoded.user_id);
     } catch (err) {
       return null;
