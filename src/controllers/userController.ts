@@ -101,16 +101,13 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
       .send("Forbidden: You can only update your own profile.");
   }
 
-  // Assuming you have the updated profile data in the request body
   const updatedProfileData = req.body;
 
-  // Update the user's profile data
   try {
     await User.update(updatedProfileData, {
       where: { user_id: reqId },
     });
 
-    // Fetch the updated user data to send back in the response
     const updatedUser = await User.findByPk(reqId);
 
     return res.status(200).json(updatedUser);
