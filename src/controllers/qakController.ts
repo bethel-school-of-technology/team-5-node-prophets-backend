@@ -4,7 +4,9 @@ import { verifyUser } from "../services/auth";
 import { User } from "../models/user";
 
 export const getAllQaks: RequestHandler = async (req, res, next) => {
-  let qaks = await Qak.findAll();
+  let qaks = await Qak.findAll({
+    include: User
+  });
   res.status(200).json(qaks);
 };
 
@@ -44,7 +46,7 @@ export const updateQak: RequestHandler = async (req, res, next) => {
 
   if (qakFound && qakFound.qak_id == newQak.qak_id && newQak.qak) {
     await Qak.update(newQak, {
-      where: { qak_id: qak_id },
+      where: { qak_id: qak_id }
     });
     res.status(200).json();
   } else {
@@ -58,10 +60,23 @@ export const deleteQak: RequestHandler = async (req, res, next) => {
 
   if (qakFound) {
     await Qak.destroy({
-      where: { qak_id: qak_id },
+      where: { qak_id: qak_id }
     });
     res.status(200).json();
   } else {
     res.status(404).json();
+  }
+};
+
+export const getAllUsersWithQaks: RequestHandler = async (req, res, next) => {
+  try {
+    // Fetch all users and include their associated Qaks
+    const usersWithQaks = await User.findAll({
+      include: Qak // Include the Qak model
+    });
+
+    res.status(200).json(usersWithQaks);
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
