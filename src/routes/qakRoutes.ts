@@ -5,6 +5,7 @@ import {
   getQak,
   updateQak,
   deleteQak,
+  getAllUsersWithQaks
 } from "../controllers/qakController";
 
 const router = Router();
