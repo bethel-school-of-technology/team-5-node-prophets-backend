@@ -5,7 +5,7 @@ import {
   hashPassword,
   comparePasswords,
   signUserToken,
-  verifyUser
+  verifyUser,
 } from "../services/auth";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
@@ -20,17 +20,20 @@ export const createUser: RequestHandler = async (req, res, next) => {
     newUser.password = hashedPassword;
     let created = await User.create(newUser);
     res.status(201).json({
+      user_id: created.user_id,
+      fullname: created.fullname,
       username: created.username,
-      userid: created.user_id
+      email: created.email,
+      city: created.city,
     });
   } else {
-    res.status(400).send("Username and password required");
+    res.status(400).send("Please complete all required fields");
   }
 };
 
 export const loginUser: RequestHandler = async (req, res, next) => {
   let existingUser: User | null = await User.findOne({
-    where: { username: req.body.username }
+    where: { username: req.body.username },
   });
 
   if (existingUser) {
@@ -63,7 +66,7 @@ export const getUserProfile: RequestHandler = async (req, res, next) => {
       email,
       city,
       state,
-      profilePicture
+      profilePicture,
     });
   } else {
     res.status(401).send();
@@ -75,10 +78,40 @@ export const getUserQaks: RequestHandler = async (req, res, next) => {
 
   if (user) {
     let posts = await User.findByPk(user.user_id, {
-      include: Qak
+      include: Qak,
     });
     res.status(200).json(posts);
   } else {
     res.status(404).json();
+  }
+};
+
+export const updateUserProfile: RequestHandler = async (req, res, next) => {
+  const user: User | null = await verifyUser(req);
+
+  if (!user) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  const reqId = parseInt(req.params.id);
+
+  if (user.user_id !== reqId) {
+    return res
+      .status(403)
+      .send("Forbidden: You can only update your own profile.");
+  }
+
+  const updatedProfileData = req.body;
+
+  try {
+    await User.update(updatedProfileData, {
+      where: { user_id: reqId },
+    });
+
+    const updatedUser = await User.findByPk(reqId);
+
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    return res.status(500).send("Internal Server Error");
   }
 };
