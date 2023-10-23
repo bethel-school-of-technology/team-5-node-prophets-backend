@@ -28,8 +28,8 @@ export const createQak: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getQak: RequestHandler = async (req, res, next) => {
-  let qak_id = req.params.id;
+export const getOneQak: RequestHandler = async (req, res, next) => {
+  let qak_id = req.params.qak_id;
   let qakFound = await Qak.findByPk(qak_id);
   if (qakFound) {
     res.status(200).json(qakFound);
@@ -39,44 +39,42 @@ export const getQak: RequestHandler = async (req, res, next) => {
 };
 
 export const updateQak: RequestHandler = async (req, res, next) => {
-  let qak_id = req.params.id;
-  let newQak: Qak = req.body;
+  let user: User | null = await verifyUser(req);
 
-  let qakFound = await Qak.findByPk(qak_id);
+  if (user) {
+    let qak_id = req.params.qak_id;
+    let updatedQak: Qak = req.body;
 
-  if (qakFound && qakFound.qak_id == newQak.qak_id && newQak.qak) {
-    await Qak.update(newQak, {
-      where: { qak_id: qak_id }
-    });
-    res.status(200).json();
+    updatedQak.user_id = user.user_id;
+
+    let qakFound = await Qak.findByPk(qak_id);
+
+    qakFound && qakFound.qak_id == updatedQak.qak_id && updatedQak.qak;
+    {
+      await Qak.update(updatedQak, {
+        where: { qak_id: qak_id }
+      }).then;
+    }
+    res.status(200).json(updatedQak);
   } else {
     res.status(400).json();
   }
 };
 
 export const deleteQak: RequestHandler = async (req, res, next) => {
-  let qak_id = req.params.id;
-  let qakFound = await Qak.findByPk(qak_id);
+  let user: User | null = await verifyUser(req);
 
-  if (qakFound) {
-    await Qak.destroy({
-      where: { qak_id: qak_id }
-    });
-    res.status(200).json();
-  } else {
-    res.status(404).json();
-  }
-};
+  if (user) {
+    let qak_id = req.params.id;
+    let qakFound = await Qak.findByPk(qak_id);
 
-export const getAllUsersWithQaks: RequestHandler = async (req, res, next) => {
-  try {
-    // Fetch all users and include their associated Qaks
-    const usersWithQaks = await User.findAll({
-      include: Qak // Include the Qak model
-    });
-
-    res.status(200).json(usersWithQaks);
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    if (qakFound) {
+      await Qak.destroy({
+        where: { qak_id: qak_id }
+      });
+      res.status(200).json();
+    } else {
+      res.status(404).json();
+    }
   }
 };

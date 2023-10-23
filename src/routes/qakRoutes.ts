@@ -2,10 +2,9 @@ import { Router } from "express";
 import {
   getAllQaks,
   createQak,
-  getQak,
+  getOneQak,
   updateQak,
-  deleteQak,
-  getAllUsersWithQaks
+  deleteQak
 } from "../controllers/qakController";
 
 const router = Router();
@@ -14,9 +13,9 @@ router.get("/", getAllQaks);
 
 router.post("/", createQak);
 
-router.get("/:id", getQak);
+router.get("/:qak_id", getOneQak);
 
-router.put("/:id", updateQak);
+router.put("/:qak_id", updateQak);
 
 router.delete("/:id", deleteQak);
 
