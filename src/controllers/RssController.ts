@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import RSSParser from "rss-parser";
-
+var cron = require("node-cron");
 const feedURLs = [
   "https://www.techrepublic.com/rssfeeds/articles/",
   "https://www.techrepublic.com/rssfeeds/topic/artificial-intelligence/",
@@ -12,7 +12,7 @@ const feedURLs = [
   "https://www.techrepublic.com/rssfeeds/topic/education/",
   "https://www.techrepublic.com/rssfeeds/topic/google/",
   "https://www.techrepublic.com/rssfeeds/topic/tech-and-work/",
-  "https://www.techrepublic.com/rssfeeds/topic/tech-industry/",
+  "https://www.techrepublic.com/rssfeeds/topic/tech-industry/"
 ];
 
 const parser = new RSSParser();
@@ -30,3 +30,14 @@ parse(feedURLs);
 export const getRssFeeds = (req: Request, res: Response) => {
   res.send(articles);
 };
+
+const updateRssFeeds = async () => {
+  articles.length = 0;
+  await parse(feedURLs);
+  console.log("rss feeds updated");
+};
+updateRssFeeds();
+
+cron.schedule("* 23 * * *", () => {
+  updateRssFeeds();
+});
