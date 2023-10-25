@@ -5,7 +5,7 @@ import {
   hashPassword,
   comparePasswords,
   signUserToken,
-  verifyUser,
+  verifyUser
 } from "../services/auth";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
@@ -24,7 +24,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
       fullname: created.fullname,
       username: created.username,
       email: created.email,
-      city: created.city,
+      city: created.city
     });
   } else {
     res.status(400).send("Please complete all required fields");
@@ -33,7 +33,7 @@ export const createUser: RequestHandler = async (req, res, next) => {
 
 export const loginUser: RequestHandler = async (req, res, next) => {
   let existingUser: User | null = await User.findOne({
-    where: { username: req.body.username },
+    where: { username: req.body.username }
   });
 
   if (existingUser) {
@@ -53,20 +53,42 @@ export const loginUser: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getOneProfile: RequestHandler = async (req, res, next) => {
+  let user: User | null = await verifyUser(req);
+
+  if (user) {
+    res.status(200).json({
+      user_id: user.user_id,
+      username: user.username,
+      password: user.password,
+      fullname: user.fullname,
+      email: user.email,
+      city: user.city,
+      state: user.state,
+      profilePicture: user.profilePicture,
+      createdAt: user.createdAt
+    });
+  } else {
+  }
+  res.status(401).json();
+};
+
 export const getUserProfile: RequestHandler = async (req, res, next) => {
   let user: User | null = await verifyUser(req);
 
   let reqId = parseInt(req.params.id);
 
   if (user && user.user_id === reqId) {
-    let { fullname, password, email, city, state, profilePicture } = user;
+    let { user_id, fullname, password, email, city, state, profilePicture } =
+      user;
     res.status(200).json({
+      user_id,
       fullname,
       password,
       email,
       city,
       state,
-      profilePicture,
+      profilePicture
     });
   } else {
     res.status(401).send();
@@ -78,7 +100,7 @@ export const getUserQaks: RequestHandler = async (req, res, next) => {
 
   if (user) {
     let posts = await User.findByPk(user.user_id, {
-      include: Qak,
+      include: Qak
     });
     res.status(200).json(posts);
   } else {
@@ -105,7 +127,7 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
 
   try {
     await User.update(updatedProfileData, {
-      where: { user_id: reqId },
+      where: { user_id: reqId }
     });
 
     const updatedUser = await User.findByPk(reqId);
@@ -113,5 +135,35 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
     return res.status(200).json(updatedUser);
   } catch (error) {
     return res.status(500).send("Internal Server Error");
+  }
+};
+
+export const updateProfile: RequestHandler = async (req, res, next) => {
+  const user: User | null = await verifyUser(req);
+
+  if (user) {
+    let user_id = req.params.user_id;
+    let updatedProfile: User = req.body;
+
+    updatedProfile.user_id = user.user_id;
+
+    let userFound = await User.findByPk(user_id);
+
+    userFound &&
+      userFound.user_id == updatedProfile.user_id &&
+      updatedProfile.username &&
+      updatedProfile.password &&
+      updatedProfile.fullname &&
+      updatedProfile.city &&
+      updatedProfile.state &&
+      updatedProfile.profilePicture;
+    {
+      await User.update(updatedProfile, {
+        where: { user_id: parseInt(user_id) }
+      });
+    }
+    res.status(200).json(updatedProfile);
+  } else {
+    res.status(400).json();
   }
 };
