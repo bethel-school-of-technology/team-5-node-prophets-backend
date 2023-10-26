@@ -4,71 +4,62 @@ import { verifyUser } from "../services/auth";
 import { User } from "../models/user";
 
 export const createQakReply: RequestHandler = async (req, res, next) => {
-  try {
-    const user: User | null = await verifyUser(req);
+  let user: User | null = await verifyUser(req);
 
-    if (!user) {
-      return res.status(403).send("Unauthorized");
-    }
+  if (!user) {
+    return res.status(403).send("Unauthorized");
+  }
 
-    const newQakReply: QakReply = req.body;
-    newQakReply.user_id = user.user_id;
+  let newQakReply: QakReply = req.body;
+  newQakReply.user_id = user.user_id;
 
-    if (newQakReply.qakReply) {
-      const createdQakReply = await QakReply.create(newQakReply);
-      res.status(201).json(createdQakReply);
-    } else {
-      res.status(400).send("Bad Request");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+  if (newQakReply.qakReply) {
+    let created = await QakReply.create(newQakReply);
+    res.status(201).json(created);
+  } else {
+    res.status(400).send("Bad Request");
   }
 };
 
 export const updateQakReply: RequestHandler = async (req, res, next) => {
-  try {
-    const qakReplyId = req.params.id;
-    const newQakReply: QakReply = req.body;
-    const user: User | null = await verifyUser(req);
+  let user: User | null = await verifyUser(req);
 
-    if (!user) {
-      return res.status(403).send("Unauthorized");
+  if (user) {
+    let qakReply_id = req.params.qak_id;
+    let updatedQakReply: QakReply = req.body;
+
+    updatedQakReply.user_id = user.user_id;
+
+    let qakReplyFound = await QakReply.findByPk(qakReply_id);
+
+    qakReplyFound &&
+      qakReplyFound.qakReply_id == updatedQakReply.qakReply_id &&
+      updatedQakReply.qakReply;
+    {
+      await QakReply.update(updatedQakReply, {
+        where: { qakReply_id: qakReply_id },
+      }).then;
     }
-
-    const qakReply = await QakReply.findByPk(qakReplyId);
-
-    if (qakReply && qakReply.user_id === user.user_id) {
-      await qakReply.update(newQakReply);
-      res.status(200).json({});
-    } else {
-      res.status(400).send("Bad Request");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(200).json(updatedQakReply);
+  } else {
+    res.status(400).json("Bad Request");
   }
 };
 
 export const deleteQakReply: RequestHandler = async (req, res, next) => {
-  try {
-    const qakReplyId = req.params.id;
-    const user: User | null = await verifyUser(req);
+  let user: User | null = await verifyUser(req);
 
-    if (!user) {
-      return res.status(403).send("Unauthorized");
-    }
+  if (user) {
+    let qakReply_id = req.params.id;
+    let qakReplyFound = await QakReply.findByPk(qakReply_id);
 
-    const qakReply = await QakReply.findByPk(qakReplyId);
-
-    if (qakReply && qakReply.user_id === user.user_id) {
-      await qakReply.destroy();
-      res.status(200).json({});
+    if (qakReplyFound) {
+      await QakReply.destroy({
+        where: { qakReply_id: qakReply_id },
+      });
+      res.status(200).json();
     } else {
-      res.status(400).send("Bad Request");
+      res.status(404).json("Bad Request");
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
   }
 };

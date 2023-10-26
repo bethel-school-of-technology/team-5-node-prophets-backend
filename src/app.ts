@@ -71,8 +71,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(404).end();
 });
 
-// Syncing our database
-db.sync({ alter: true }).then(() => {
+// Syncing our database   True to create new column  False to maintain
+db.sync({ alter: false }).then(() => {
   console.info("Connected to the database");
 });
 
