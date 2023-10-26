@@ -6,7 +6,7 @@ import {
   Sequelize,
 } from "sequelize";
 import { User } from "../models/user";
-
+import { QakReply } from "./qakReply";
 export class Qak extends Model<
   InferAttributes<Qak>,
   InferCreationAttributes<Qak>
@@ -58,4 +58,5 @@ export function QakFactory(sequelize: Sequelize) {
 export function AssociateUserQak() {
   User.hasMany(Qak, { foreignKey: "user_id" });
   Qak.belongsTo(User, { foreignKey: "user_id" });
+  Qak.hasMany(QakReply, { foreignKey: "qak_id" });
 }
