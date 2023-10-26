@@ -9,7 +9,7 @@ const router = Router();
 
 router.post("/", createQakReply);
 
-router.put("/:qakReply_id", updateQakReply);
+router.put("/edit/:qakReply_id", updateQakReply);
 
 router.delete("/:qakReply_id", deleteQakReply);
 
