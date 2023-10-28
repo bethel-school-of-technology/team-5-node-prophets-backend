@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   createQakReply,
+  getOneQakReply,
   updateQakReply,
   deleteQakReply,
 } from "../controllers/qakReplyController";
@@ -9,7 +10,9 @@ const router = Router();
 
 router.post("/", createQakReply);
 
-router.put("/:qakReply_id", updateQakReply);
+router.get("/:qakReply_id", getOneQakReply);
+
+router.put("/edit/:qakReply_id", updateQakReply);
 
 router.delete("/:id", deleteQakReply);
 

@@ -21,6 +21,16 @@ export const createQakReply: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getOneQakReply: RequestHandler = async (req, res, next) => {
+  let qakReply_id = req.params.qakReply_id;
+  let qakReplyFound = await QakReply.findByPk(qakReply_id);
+  if (qakReplyFound) {
+    res.status(200).json(qakReplyFound);
+  } else {
+    res.status(404).json({});
+  }
+};
+
 export const updateQakReply: RequestHandler = async (req, res, next) => {
   let user: User | null = await verifyUser(req);
 
