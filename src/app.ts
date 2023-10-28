@@ -9,11 +9,13 @@ import rssRoutes from "./routes/rssRoutes";
 import { User } from "./models/user";
 import { Qak } from "./models/qak";
 import { articles } from "./controllers/RssController"; //Added Article Search for Rss Feed - Joe
+import qakReplyRoutes from "./routes/qakReplyRoutes";
+
 const cors = require("cors");
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3001"]
+  origin: ["http://localhost:4200", "http://localhost:3001"],
 };
 
 app.use(cors(corsOptions));
@@ -35,15 +37,15 @@ app.get("/search", async (req, res) => {
           { username: { [Op.like]: `%${query}%` } },
           { email: { [Op.like]: `%${query}%` } },
           { city: { [Op.like]: `%${query}%` } },
-          { state: { [Op.like]: `%${query}%` } }
-        ]
-      }
+          { state: { [Op.like]: `%${query}%` } },
+        ],
+      },
     });
 
     const qaks = await Qak.findAll({
       where: {
-        qak: { [Op.like]: `%${query}%` }
-      }
+        qak: { [Op.like]: `%${query}%` },
+      },
     });
     //Added Article Search for Rss Feed - Joe
     const rssArticles = articles.filter(
@@ -61,6 +63,7 @@ app.get("/search", async (req, res) => {
 
 // Routes
 app.use("/api/qaks", qakRoutes);
+app.use("/api/qakReply", qakReplyRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/rss", rssRoutes);
 
@@ -68,8 +71,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.status(404).end();
 });
 
-// Syncing our database
-db.sync({ alter: true }).then(() => {
+// Syncing our database   True to create new column  False to maintain
+db.sync({ alter: false }).then(() => {
   console.info("Connected to the database");
 });
 

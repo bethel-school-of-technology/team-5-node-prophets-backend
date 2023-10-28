@@ -5,33 +5,39 @@ import {
   Model,
   Sequelize,
 } from "sequelize";
+import { Qak } from "../models/qak";
 import { User } from "../models/user";
-import { QakReply } from "./qakReply";
-export class Qak extends Model<
-  InferAttributes<Qak>,
-  InferCreationAttributes<Qak>
+
+export class QakReply extends Model<
+  InferAttributes<QakReply>,
+  InferCreationAttributes<QakReply>
 > {
+  declare qakReply_id: number;
   declare qak_id: number;
   declare user_id: number;
-  declare qak: string;
+  declare qakReply: string;
   declare createdAt?: Date;
   declare updatedAt?: Date;
 }
 
-export function QakFactory(sequelize: Sequelize) {
-  Qak.init(
+export function QakReplyFactory(sequelize: Sequelize) {
+  QakReply.init(
     {
-      qak_id: {
+      qakReply_id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
+        allowNull: false,
+      },
+      qak_id: {
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      qak: {
+      qakReply: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
@@ -49,14 +55,14 @@ export function QakFactory(sequelize: Sequelize) {
     },
     {
       freezeTableName: true,
-      tableName: "qaks",
+      tableName: "qakReply",
       sequelize,
     }
   );
 }
 
-export function AssociateUserQak() {
-  User.hasMany(Qak, { foreignKey: "user_id" });
-  Qak.belongsTo(User, { foreignKey: "user_id" });
-  Qak.hasMany(QakReply, { foreignKey: "qak_id" });
+export function AssociateUserQakReply() {
+  QakReply.belongsTo(User, { foreignKey: "user_id" });
+  QakReply.belongsTo(Qak, { foreignKey: "qak_id" });
+  User.hasMany(QakReply, { foreignKey: "user_id" });
 }

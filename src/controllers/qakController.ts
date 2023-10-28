@@ -5,7 +5,7 @@ import { User } from "../models/user";
 
 export const getAllQaks: RequestHandler = async (req, res, next) => {
   let qaks = await Qak.findAll({
-    include: User
+    include: [{ all: true, nested: true }],
   });
   res.status(200).json(qaks);
 };
@@ -14,7 +14,7 @@ export const createQak: RequestHandler = async (req, res, next) => {
   let user: User | null = await verifyUser(req);
 
   if (!user) {
-    return res.status(403).send();
+    return res.status(403).send("Unauthorized");
   }
 
   let newQak: Qak = req.body;
@@ -24,7 +24,7 @@ export const createQak: RequestHandler = async (req, res, next) => {
     let created = await Qak.create(newQak);
     res.status(201).json(created);
   } else {
-    res.status(400).send();
+    res.status(400).send("Bad Request");
   }
 };
 
@@ -52,12 +52,12 @@ export const updateQak: RequestHandler = async (req, res, next) => {
     qakFound && qakFound.qak_id == updatedQak.qak_id && updatedQak.qak;
     {
       await Qak.update(updatedQak, {
-        where: { qak_id: qak_id }
+        where: { qak_id: qak_id },
       }).then;
     }
     res.status(200).json(updatedQak);
   } else {
-    res.status(400).json();
+    res.status(400).json("Bad Request");
   }
 };
 
@@ -70,11 +70,11 @@ export const deleteQak: RequestHandler = async (req, res, next) => {
 
     if (qakFound) {
       await Qak.destroy({
-        where: { qak_id: qak_id }
+        where: { qak_id: qak_id },
       });
       res.status(200).json();
     } else {
-      res.status(404).json();
+      res.status(404).json("Bad Request");
     }
   }
 };
