@@ -6,7 +6,7 @@ import { QakReply } from "../models/qakReply";
 
 export const getAllQaks: RequestHandler = async (req, res, next) => {
   let qaks = await Qak.findAll({
-    include: [User, QakReply],
+    include: [{ all: true, nested: true }],
   });
   res.status(200).json(qaks);
 };
