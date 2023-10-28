@@ -2,7 +2,6 @@ import { RequestHandler } from "express";
 import { Qak } from "../models/qak";
 import { verifyUser } from "../services/auth";
 import { User } from "../models/user";
-import { QakReply } from "../models/qakReply";
 
 export const getAllQaks: RequestHandler = async (req, res, next) => {
   let qaks = await Qak.findAll({
