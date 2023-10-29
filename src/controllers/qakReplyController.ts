@@ -42,14 +42,15 @@ export const updateQakReply: RequestHandler = async (req, res, next) => {
 
     let qakReplyFound = await QakReply.findByPk(qakReply_id);
 
-    qakReplyFound &&
-      qakReplyFound.qakReply_id == updatedQakReply.qakReply_id &&
-      updatedQakReply.qakReply;
-    {
+    if (
+      qakReplyFound &&
+      qakReplyFound.qakReply_id == updatedQakReply.qakReply_id
+    ) {
       await QakReply.update(updatedQakReply, {
         where: { qakReply_id: qakReply_id },
-      }).then;
+      });
     }
+
     res.status(200).json(updatedQakReply);
   } else {
     res.status(400).json("Bad Request");

@@ -12,7 +12,7 @@ router.post("/", createQakReply);
 
 router.get("/:qakReply_id", getOneQakReply);
 
-router.put("/edit/:qakReply_id", updateQakReply);
+router.put("/:qakReply_id", updateQakReply);
 
 router.delete("/:id", deleteQakReply);
 
