@@ -100,11 +100,23 @@ export const getUserQaks: RequestHandler = async (req, res, next) => {
 
   if (user) {
     let posts = await User.findByPk(user.user_id, {
-      include: Qak
+      include: [{ all: true, nested: true }]
     });
     res.status(200).json(posts);
   } else {
     res.status(404).json();
+  }
+};
+
+export const getOneUserQak: RequestHandler = async (req, res, next) => {
+  let user_id = req.params.user_id;
+  let userFound = await User.findByPk(user_id, {
+    include: [{ all: true, nested: true }]
+  });
+  if (userFound) {
+    res.status(200).json(userFound);
+  } else {
+    res.status(404).json({});
   }
 };
 
