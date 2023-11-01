@@ -15,7 +15,7 @@ const cors = require("cors");
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3001"]
+  origin: ["http://localhost:4200", "http://localhost:3001"],
 };
 
 app.use(cors(corsOptions));
@@ -28,7 +28,11 @@ app.use(express.urlencoded({ extended: true }));
 // Search for users, qaks and RssFeed - Joe
 app.get("/search", async (req, res) => {
   const query = req.query.q;
-
+  //Fixed not searching for the full article in search - Joe
+  if (typeof query !== "string") {
+    res.status(400).send("Invalid query format");
+    return;
+  }
   try {
     const users = await User.findAll({
       where: {
@@ -37,21 +41,24 @@ app.get("/search", async (req, res) => {
           { username: { [Op.like]: `%${query}%` } },
           { email: { [Op.like]: `%${query}%` } },
           { city: { [Op.like]: `%${query}%` } },
-          { state: { [Op.like]: `%${query}%` } }
-        ]
-      }
+          { state: { [Op.like]: `%${query}%` } },
+        ],
+      },
     });
 
     const qaks = await Qak.findAll({
       where: {
-        qak: { [Op.like]: `%${query}%` }
-      }
+        qak: { [Op.like]: `%${query}%` },
+      },
     });
     //Added Article Search for Rss Feed - Joe
+    const queryLowerCase = query.trim().toLowerCase(); //Fixed not searching for the full article in search - Joe
     const rssArticles = articles.filter(
       (article) =>
-        (article.title && article.title.includes(query)) ||
-        (article.description && article.description.includes(query))
+        (article.title &&
+          article.title.toLowerCase().includes(queryLowerCase)) ||
+        (article.description &&
+          article.description.toLowerCase().includes(queryLowerCase))
     );
 
     res.json({ users, qaks, rssArticles });
