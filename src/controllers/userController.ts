@@ -7,9 +7,12 @@ import {
   signUserToken,
   verifyUser
 } from "../services/auth";
+import { QakReply } from "../models/qakReply";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
-  let users = await User.findAll();
+  let users = await User.findAll({
+    include: [{ all: true, nested: true }]
+  });
   res.status(200).json(users);
 };
 
@@ -79,10 +82,19 @@ export const getUserProfile: RequestHandler = async (req, res, next) => {
   let reqId = parseInt(req.params.id);
 
   if (user && user.user_id === reqId) {
-    let { user_id, fullname, password, email, city, state, profilePicture } =
-      user;
+    let {
+      user_id,
+      username,
+      fullname,
+      password,
+      email,
+      city,
+      state,
+      profilePicture
+    } = user;
     res.status(200).json({
       user_id,
+      username,
       fullname,
       password,
       email,

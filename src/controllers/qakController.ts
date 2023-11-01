@@ -5,7 +5,7 @@ import { User } from "../models/user";
 
 export const getAllQaks: RequestHandler = async (req, res, next) => {
   let qaks = await Qak.findAll({
-    include: [{ all: true, nested: true }],
+    include: [{ all: true, nested: true }]
   });
   res.status(200).json(qaks);
 };
@@ -54,7 +54,7 @@ export const updateQak: RequestHandler = async (req, res, next) => {
     if (qakFound) {
       if (qakFound.user_id == user.user_id) {
         await Qak.update(updatedQak, {
-          where: { qak_id: qak_id },
+          where: { qak_id: qak_id }
         });
         res.status(200).json(updatedQak);
       } else {

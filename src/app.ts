@@ -72,7 +72,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // Syncing our database   True to create new column  False to maintain
-db.sync({ alter: false }).then(() => {
+db.sync({ alter: true }).then(() => {
   console.info("Connected to the database");
 });
 

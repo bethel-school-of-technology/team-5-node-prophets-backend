@@ -3,7 +3,7 @@ import {
   createQakReply,
   getOneQakReply,
   updateQakReply,
-  deleteQakReply,
+  deleteQakReply
 } from "../controllers/qakReplyController";
 
 const router = Router();
