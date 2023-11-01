@@ -38,26 +38,28 @@ export const updateQakReply: RequestHandler = async (req, res, next) => {
     let qakReply_id = req.params.qakReply_id;
     let updatedQakReply: QakReply = req.body;
 
-    if(!updatedQakReply.qakReply) {
+    if (!updatedQakReply.qakReply) {
       res.status(400).json("QAK Reply should not be empty");
     }
 
     let qakReplyFound = await QakReply.findByPk(qakReply_id);
 
-    if(qakReplyFound)
-    {
-      if (qakReplyFound.user_id == user.user_id){
-      
-      await QakReply.update(updatedQakReply, {
-        where: { qakReply_id: qakReply_id },
-      });
-    res.status(200).json(updatedQakReply);
+    if (qakReplyFound) {
+      if (qakReplyFound.user_id == user.user_id) {
+        await QakReply.update(updatedQakReply, {
+          where: { qakReply_id: qakReply_id },
+        });
+        res.status(200).json(updatedQakReply);
+      } else {
+        res.status(403).json("Not Authorized");
+      }
+    } else {
+      res.status(404).json("QAK Replay Not Found");
+    }
   } else {
-    res.status(403).json("Not Authorized");
+    res.status(401).json("Not Logged in");
   }
-}else {
-  res.status(404).json("QAK Replay Not Found")
-}
+};
 
 export const deleteQakReply: RequestHandler = async (req, res, next) => {
   let user: User | null = await verifyUser(req);
