@@ -15,7 +15,7 @@ const cors = require("cors");
 
 const app = express();
 const corsOptions = {
-  origin: ["http://localhost:4200", "http://localhost:3001"],
+  origin: ["http://localhost:4200", "http://localhost:3001"]
 };
 
 app.use(cors(corsOptions));
@@ -37,15 +37,15 @@ app.get("/search", async (req, res) => {
           { username: { [Op.like]: `%${query}%` } },
           { email: { [Op.like]: `%${query}%` } },
           { city: { [Op.like]: `%${query}%` } },
-          { state: { [Op.like]: `%${query}%` } },
-        ],
-      },
+          { state: { [Op.like]: `%${query}%` } }
+        ]
+      }
     });
 
     const qaks = await Qak.findAll({
       where: {
-        qak: { [Op.like]: `%${query}%` },
-      },
+        qak: { [Op.like]: `%${query}%` }
+      }
     });
     //Added Article Search for Rss Feed - Joe
     const rssArticles = articles.filter(
