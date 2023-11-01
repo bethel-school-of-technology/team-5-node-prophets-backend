@@ -38,38 +38,47 @@ export const updateQakReply: RequestHandler = async (req, res, next) => {
     let qakReply_id = req.params.qakReply_id;
     let updatedQakReply: QakReply = req.body;
 
-    updatedQakReply.user_id = user.user_id;
+    if(!updatedQakReply.qakReply) {
+      res.status(400).json("QAK Reply should not be empty");
+    }
 
     let qakReplyFound = await QakReply.findByPk(qakReply_id);
 
-    qakReplyFound &&
-      qakReplyFound.qakReply_id == updatedQakReply.qakReply_id &&
-      updatedQakReply.qakReply;
+    if(qakReplyFound)
     {
+      if (qakReplyFound.user_id == user.user_id){
+      
       await QakReply.update(updatedQakReply, {
         where: { qakReply_id: qakReply_id },
-      }).then;
-    }
+      });
     res.status(200).json(updatedQakReply);
   } else {
-    res.status(400).json("Bad Request");
+    res.status(403).json("Not Authorized");
   }
-};
+}else {
+  res.status(404).json("QAK Replay Not Found")
+}
 
 export const deleteQakReply: RequestHandler = async (req, res, next) => {
   let user: User | null = await verifyUser(req);
 
   if (user) {
     let qakReply_id = req.params.id;
+
     let qakReplyFound = await QakReply.findByPk(qakReply_id);
 
     if (qakReplyFound) {
-      await QakReply.destroy({
-        where: { qakReply_id: qakReply_id },
-      });
-      res.status(200).json();
+      if (qakReplyFound.user_id == user.user_id) {
+        await qakReplyFound.destroy();
+
+        res.status(200).json("QAK Reply Deleted");
+      } else {
+        res.status(403).json("Not Authorized");
+      }
     } else {
-      res.status(404).json("Bad Request");
+      res.status(404).json("Qak Reply Not found");
     }
+  } else {
+    res.status(401).json("Not Logged in");
   }
 };

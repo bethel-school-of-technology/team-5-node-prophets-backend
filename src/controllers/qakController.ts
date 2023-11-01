@@ -45,18 +45,14 @@ export const updateQak: RequestHandler = async (req, res, next) => {
     let qak_id = req.params.qak_id;
     let updatedQak: Qak = req.body;
 
-    if(!updatedQak.qak) {
-      res.status(400).json("Qak should not be empty");
+    if (!updatedQak.qak) {
+      res.status(400).json("QAK should not be empty");
     }
-
-    // updatedQak.user_id = user.user_id;
 
     let qakFound = await Qak.findByPk(qak_id);
 
-    if(qakFound) // updatedQak.qak
-    {
+    if (qakFound) {
       if (qakFound.user_id == user.user_id) {
-
         await Qak.update(updatedQak, {
           where: { qak_id: qak_id },
         });
@@ -64,11 +60,9 @@ export const updateQak: RequestHandler = async (req, res, next) => {
       } else {
         res.status(403).json("Not Authorized");
       }
-      
     } else {
-      res.status(404).json("Qak Not found");
+      res.status(404).json("QAK Not found");
     }
-    
   } else {
     res.status(401).json("Not Logged in");
   }
@@ -82,24 +76,17 @@ export const deleteQak: RequestHandler = async (req, res, next) => {
 
     let qakFound = await Qak.findByPk(qak_id);
 
-    if(qakFound) // updatedQak.qak
-    {
+    if (qakFound) {
       if (qakFound.user_id == user.user_id) {
-
         await qakFound.destroy();
 
-        // await Qak.destroy({
-        //   where: { qak_id: qak_id },
-        // });
-        res.status(200).json("Qak deleted");
+        res.status(200).json("QAK Deleted");
       } else {
         res.status(403).json("Not Authorized");
       }
-      
     } else {
       res.status(404).json("Qak Not found");
     }
-    
   } else {
     res.status(401).json("Not Logged in");
   }
