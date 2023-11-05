@@ -3,6 +3,20 @@ import { QakReply } from "../models/qakReply";
 import { verifyUser } from "../services/auth";
 import { User } from "../models/user";
 
+export const getQakReply: RequestHandler = async (req, res, next) => {
+  let user_id = req.params.user_id;
+  let userFound = await QakReply.findByPk(user_id, {
+    attributes: { exclude: ["password"] },
+    include: [{ all: true, nested: true }]
+  });
+  if (userFound) {
+    const serializedUser = userFound.toJSON();
+    res.status(200).json(serializedUser);
+  } else {
+    res.status(404).json({});
+  }
+};
+
 export const createQakReply: RequestHandler = async (req, res, next) => {
   let user: User | null = await verifyUser(req);
 
@@ -47,7 +61,7 @@ export const updateQakReply: RequestHandler = async (req, res, next) => {
     if (qakReplyFound) {
       if (qakReplyFound.user_id == user.user_id) {
         await QakReply.update(updatedQakReply, {
-          where: { qakReply_id: qakReply_id },
+          where: { qakReply_id: qakReply_id }
         });
         res.status(200).json(updatedQakReply);
       } else {
