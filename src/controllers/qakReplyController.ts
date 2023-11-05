@@ -6,10 +6,12 @@ import { User } from "../models/user";
 export const getQakReply: RequestHandler = async (req, res, next) => {
   let user_id = req.params.user_id;
   let userFound = await QakReply.findByPk(user_id, {
+    attributes: { exclude: ["password"] },
     include: [{ all: true, nested: true }]
   });
   if (userFound) {
-    res.status(200).json(userFound);
+    const serializedUser = userFound.toJSON();
+    res.status(200).json(serializedUser);
   } else {
     res.status(404).json({});
   }

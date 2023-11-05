@@ -3,7 +3,7 @@ import {
   InferAttributes,
   InferCreationAttributes,
   Model,
-  Sequelize,
+  Sequelize
 } from "sequelize";
 import { User } from "../models/user";
 import { QakReply } from "./qakReply";
@@ -25,32 +25,32 @@ export function QakFactory(sequelize: Sequelize) {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
-        allowNull: false,
+        allowNull: false
       },
       user_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: false
       },
       qak: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: false
       },
 
       createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW,
+        defaultValue: DataTypes.NOW
       },
       updatedAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW,
-      },
+        defaultValue: DataTypes.NOW
+      }
     },
     {
       freezeTableName: true,
       tableName: "qaks",
-      sequelize,
+      sequelize
     }
   );
 }

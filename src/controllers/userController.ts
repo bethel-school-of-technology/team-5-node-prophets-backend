@@ -1,16 +1,15 @@
 import { RequestHandler } from "express";
 import { User } from "../models/user";
-import { Qak } from "../models/qak";
 import {
   hashPassword,
   comparePasswords,
   signUserToken,
   verifyUser
 } from "../services/auth";
-import { QakReply } from "../models/qakReply";
 
 export const getAllUsers: RequestHandler = async (req, res, next) => {
   let users = await User.findAll({
+    attributes: { exclude: ["password"] },
     include: [{ all: true, nested: true }]
   });
   res.status(200).json(users);
@@ -168,25 +167,27 @@ export const updateProfile: RequestHandler = async (req, res, next) => {
   if (user) {
     let user_id = req.params.user_id;
     let updatedProfile: User = req.body;
+    if (updatedProfile.username && updatedProfile.password) {
+      let hashedPassword = await hashPassword(updatedProfile.password);
+      updatedProfile.password = hashedPassword;
 
-    updatedProfile.user_id = user.user_id;
+      updatedProfile.user_id = user.user_id;
 
-    let userFound = await User.findByPk(user_id);
+      let userFound = await User.findByPk(user_id);
 
-    userFound &&
-      userFound.user_id == updatedProfile.user_id &&
-      updatedProfile.username &&
-      updatedProfile.password &&
-      updatedProfile.fullname &&
-      updatedProfile.city &&
-      updatedProfile.state &&
-      updatedProfile.profilePicture;
-    {
-      await User.update(updatedProfile, {
-        where: { user_id: parseInt(user_id) }
-      });
+      userFound &&
+        userFound.user_id == updatedProfile.user_id &&
+        updatedProfile.fullname &&
+        updatedProfile.city &&
+        updatedProfile.state &&
+        updatedProfile.profilePicture;
+      {
+        await User.update(updatedProfile, {
+          where: { user_id: parseInt(user_id) }
+        });
+      }
+      res.status(200).json(updatedProfile);
     }
-    res.status(200).json(updatedProfile);
   } else {
     res.status(400).json();
   }

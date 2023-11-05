@@ -21,7 +21,6 @@ export class User extends Model<
   declare createdAt?: Date;
   declare updatedAt?: Date;
 }
-
 export function UserFactory(sequelize: Sequelize) {
   User.init(
     {

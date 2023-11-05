@@ -5,8 +5,10 @@ import { User } from "../models/user";
 
 export const getAllQaks: RequestHandler = async (req, res, next) => {
   let qaks = await Qak.findAll({
+    attributes: { exclude: ["password"] },
     include: [{ all: true, nested: true }]
   });
+
   res.status(200).json(qaks);
 };
 
